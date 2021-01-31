@@ -39,9 +39,8 @@ namespace CodinGame.Puzzles.Medium.SkynetRevolution
                 gateways[i] = ei;
                 if (nodes[ei].isGate == false) nodes[ei].isGate = true;
 
-                for (int j = 0; j < nodes[ei].linknodes.Count; j++)
+                foreach (int ln in nodes[ei].linknodes)
                 {
-                    int ln = nodes[ei].linknodes[j];
                     if (nodes[ln].linknodes.Count == 3)
                     {
                         for (int k = 0; k < nodes[ln].linknodes.Count; k++)
@@ -83,9 +82,9 @@ namespace CodinGame.Puzzles.Medium.SkynetRevolution
                 }
             }
 
-            for (int i = 0; i < gateways.Length; i++)
+            foreach (int gateway in gateways)
             {
-                Console.Error.WriteLine("{0}/", gateways[i]);
+                Console.Error.WriteLine("{0}/", gateway);
             }
 
             for (int i = 0; i < E * 2; i++)
@@ -102,9 +101,8 @@ namespace CodinGame.Puzzles.Medium.SkynetRevolution
                 int SI = int.Parse(Console.ReadLine()); // The index of the node on which the Skynet agent is positioned this turn
                 Console.Error.WriteLine("SI:{0}", SI);
 
-                for (int i = 0; i < nodes[SI].linknodes.Count; i++)
+                foreach (int ln in nodes[SI].linknodes)
                 {
-                    int ln = nodes[SI].linknodes[i];
                     if (nodes[ln].isGate == true)
                     {
                         result = string.Format("{0} {1}", SI, ln);
@@ -127,9 +125,8 @@ namespace CodinGame.Puzzles.Medium.SkynetRevolution
 
                 if (result == string.Empty)
                 {
-                    for (int i = 0; i < nodes[SI].linknodes.Count; i++)
+                    foreach (int ln in nodes[SI].linknodes)
                     {
-                        int ln = nodes[SI].linknodes[i];
                         result = string.Format("{0} {1}", SI, ln);
                         Remove(nodes[SI].linknodes, ln);
                         Remove(nodes[ln].linknodes, SI);
