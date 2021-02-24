@@ -1,4 +1,4 @@
-namespace CodinGame.Puzzles.Hard.TheResistance
+namespace CodinGame.Puzzles.VeryHard.TheResistance
 {
     using System;
     using System.Collections.Generic;
