@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Contests.SpringChallenge2021
+namespace CondinGame.Contests.SpringChallenge2021
 {
     internal class Cell
     {
@@ -90,6 +90,7 @@ namespace Contests.SpringChallenge2021
 
     internal class Game
     {
+        public const int SunPointsRequiredToCompleteTreeLifecycle = 4;
         public List<Cell> board;
         public int day;
         public int myScore, opponentScore;
@@ -108,7 +109,24 @@ namespace Contests.SpringChallenge2021
 
         public Action GetNextAction()
             // TODO: write your algorithm here
-            => possibleActions.First();
+        {
+            if (mySun >= SunPointsRequiredToCompleteTreeLifecycle)
+            {
+                var mineTreeCellIndexes = from tree in trees
+                    where tree.isMine
+                    select tree.cellIndex;
+
+                var richnessCells =
+                    from boardCell in board
+                    join mineTreeCellIndex in mineTreeCellIndexes on boardCell.index equals mineTreeCellIndex
+                    orderby boardCell.richess descending
+                    select boardCell.index;
+
+                return new Action(Action.COMPLETE, richnessCells.First());
+            }
+
+            return new Action(Action.WAIT);
+        }
     }
 
     internal class Player
