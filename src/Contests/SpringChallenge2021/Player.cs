@@ -65,27 +65,23 @@ namespace CondinGame.Contests.SpringChallenge2021
         public static Action Parse(string action)
         {
             var parts = action.Split(" ");
-            switch (parts[0])
+            return parts[0] switch
             {
-                case WAIT:
-                    return new Action(WAIT);
-                case SEED:
-                    return new Action(SEED, int.Parse(parts[1]), int.Parse(parts[2]));
-                case GROW:
-                case COMPLETE:
-                default:
-                    return new Action(parts[0], int.Parse(parts[1]));
-            }
+                WAIT => new Action(WAIT),
+                SEED => new Action(SEED, int.Parse(parts[1]), int.Parse(parts[2])),
+                GROW => new Action(parts[0], int.Parse(parts[1])),
+                COMPLETE => new Action(parts[0], int.Parse(parts[1])),
+                _ => new Action(parts[0], int.Parse(parts[1]))
+            };
         }
 
         public override string ToString()
-        {
-            if (type == WAIT)
-                return WAIT;
-            if (type == SEED)
-                return string.Format("{0} {1} {2}", SEED, sourceCellIdx, targetCellIdx);
-            return string.Format("{0} {1}", type, targetCellIdx);
-        }
+            => type switch
+            {
+                WAIT => type,
+                SEED => $"{type} {sourceCellIdx} {targetCellIdx}",
+                _ => $"{type} {targetCellIdx}"
+            };
     }
 
     internal class Game
@@ -108,25 +104,42 @@ namespace CondinGame.Contests.SpringChallenge2021
         }
 
         public Action GetNextAction()
-            // TODO: write your algorithm here
         {
             if (mySun >= SunPointsRequiredToCompleteTreeLifecycle)
             {
-                var mineTreeCellIndexes = from tree in trees
-                    where tree.isMine
-                    select tree.cellIndex;
+                var collectableTrees = GetCollectableTreeCellIndexes().ToList();
+                if (collectableTrees.Any())
+                {
+                    var richnessCells = GetCellsIndexesOrderByRichness(collectableTrees);
+                    return new Action(Action.COMPLETE, richnessCells.Last());
+                }
 
-                var richnessCells =
-                    from boardCell in board
-                    join mineTreeCellIndex in mineTreeCellIndexes on boardCell.index equals mineTreeCellIndex
-                    orderby boardCell.richess descending
-                    select boardCell.index;
-
-                return new Action(Action.COMPLETE, richnessCells.First());
+                var treeOrderedBySize = GetMineTreeCellIndexesOrderBySize();
+                return new Action(Action.GROW, treeOrderedBySize.Last());
             }
 
             return new Action(Action.WAIT);
         }
+
+        private IEnumerable<int> GetCellsIndexesOrderByRichness(IEnumerable<int> mineTreeCellIndexes)
+            => from boardCell in board
+                join mineTreeCellIndex in mineTreeCellIndexes on boardCell.index equals mineTreeCellIndex
+                orderby boardCell.richess
+                select boardCell.index;
+
+        private IEnumerable<int> GetCollectableTreeCellIndexes()
+            => GetMineTreeCellIndexes(3);
+
+        private IEnumerable<int> GetMineTreeCellIndexes(int treeSize)
+            => from tree in trees
+                where tree.isMine && tree.size == treeSize
+                select tree.cellIndex;
+
+        private IEnumerable<int> GetMineTreeCellIndexesOrderBySize()
+            => from tree in trees
+                where tree.isMine
+                orderby tree.size
+                select tree.cellIndex;
     }
 
     internal class Player
