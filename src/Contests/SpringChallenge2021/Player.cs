@@ -69,8 +69,8 @@ namespace CondinGame.Contests.SpringChallenge2021
             {
                 WAIT => new Action(WAIT),
                 SEED => new Action(SEED, int.Parse(parts[1]), int.Parse(parts[2])),
-                GROW => new Action(parts[0], int.Parse(parts[1])),
-                COMPLETE => new Action(parts[0], int.Parse(parts[1])),
+                GROW => new Action(GROW, int.Parse(parts[1])),
+                COMPLETE => new Action(COMPLETE, int.Parse(parts[1])),
                 _ => new Action(parts[0], int.Parse(parts[1]))
             };
         }
@@ -80,6 +80,8 @@ namespace CondinGame.Contests.SpringChallenge2021
             {
                 WAIT => type,
                 SEED => $"{type} {sourceCellIdx} {targetCellIdx}",
+                GROW => $"{type} {targetCellIdx}",
+                COMPLETE => $"{type} {targetCellIdx}",
                 _ => $"{type} {targetCellIdx}"
             };
     }
@@ -105,6 +107,10 @@ namespace CondinGame.Contests.SpringChallenge2021
 
         public Action GetNextAction()
         {
+            // TODO Strategy => Place the trees at the richness cells and take position.
+            
+            // TODO Compute action cost in sun point
+            
             if (mySun >= SunPointsRequiredToCompleteTreeLifecycle)
             {
                 var collectableTrees = GetCollectableTreeCellIndexes().ToList();
@@ -113,10 +119,27 @@ namespace CondinGame.Contests.SpringChallenge2021
                     var richnessCells = GetCellsIndexesOrderByRichness(collectableTrees);
                     return new Action(Action.COMPLETE, richnessCells.Last());
                 }
-
-                var treeOrderedBySize = GetMineTreeCellIndexesOrderBySize();
-                return new Action(Action.GROW, treeOrderedBySize.Last());
             }
+
+            // TODO Compute how many sun point ?
+            if (mySun >= SunPointsRequiredToCompleteTreeLifecycle)
+            {
+                var treeOrderedBySize = GetMineTreeCellIndexesOrderBySize().ToList();
+                var treeOrderedBySizeAndByRichness = GetCellsIndexesOrderByRichness(treeOrderedBySize);
+                return new Action(Action.GROW, treeOrderedBySizeAndByRichness.Last());
+            }
+
+            var possibleSeedActions = possibleActions.Where(action => action.type == Action.SEED).ToList();
+            if (possibleSeedActions.Any())
+            {
+                var seedCellsIndexesOrderByRichness =
+                    GetCellsIndexesOrderByRichness(possibleSeedActions.Select(a => a.targetCellIdx));
+
+                // TODO Compute the best candidate action depending sun cost  
+                return possibleSeedActions
+                    .Last(a => a.targetCellIdx == seedCellsIndexesOrderByRichness.Last());
+            }
+
 
             return new Action(Action.WAIT);
         }
