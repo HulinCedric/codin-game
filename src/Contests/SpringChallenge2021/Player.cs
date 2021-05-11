@@ -61,7 +61,6 @@ namespace CondinGame.Contests.SpringChallenge2021
                 for (var i = 0; i < numberOfPossibleMoves; i++)
                 {
                     var possibleMove = Console.ReadLine();
-                    Console.Error.WriteLine(possibleMove);
                     game.possibleActions.Add(Action.Parse(possibleMove));
                 }
 
