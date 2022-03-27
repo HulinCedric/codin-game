@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CondinGame.Contests.SpringChallenge2021
+namespace CodinGame.Contests.SpringChallenge2021
 {
     internal class Player
     {

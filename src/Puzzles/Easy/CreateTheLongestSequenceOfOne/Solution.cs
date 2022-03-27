@@ -1,8 +1,8 @@
-namespace CodinGame.Puzzles.Easy.CreateTheLongestSequenceOf1s
+namespace CodinGame.Puzzles.Easy.CreateTheLongestSequenceOfOne
 {
     using System;
     using System.Linq;
-
+    
     public class Solution
     {
         public static void Main(string[] args)
