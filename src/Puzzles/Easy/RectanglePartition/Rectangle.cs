@@ -44,8 +44,8 @@ namespace CodinGame.Puzzles.Easy.RectanglePartition
         }
 
         private static int SumAllEqualDistances(
-            IReadOnlyCollection<int> measuredDistancesOnXAxis,
-            IReadOnlyCollection<int> measuredDistancesOnYAxis)
+            List<int> measuredDistancesOnXAxis,
+            List<int> measuredDistancesOnYAxis)
         {
             var squareCount = 0;
 
